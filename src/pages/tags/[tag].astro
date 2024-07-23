@@ -1,0 +1,37 @@
+---
+import BlogCard from '../../components/BlogCard.astro';
+import BaseLayout from '../../layouts/MainLayout.astro';
+
+
+//STRAPI modules
+import fetchApi from '../../lib/strapi';
+import type Article from '../../interfaces/article'; 
+export async function getStaticPaths() {
+  const articles = await fetchApi<Article[]>({
+   endpoint: 'articles', // el tipo de contenido a obtener
+   wrappedByKey: 'data', // la clave para descomponer la respuesta
+});
+
+
+const allCategories = [...new Set(articles.map((post) => post.attributes.tags.split(",")).flat())];
+const categoriesList = allCategories.map((category) => category.trim().toLowerCase())
+  return categoriesList.map((el) => ({ params:{ tag: el }, props:{posts: articles} }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+const filteredPosts = posts.filter((post) => post.attributes.tags?.split(", ").includes(tag));
+console.log(Astro.url.pathname)
+---
+<BaseLayout title={tag}>
+  {filteredPosts.map((post) => 
+  <BlogCard
+      title = {post.attributes.title}
+      category = {post.attributes.tags.split(",")}
+      image = {post.attributes.coverurl}
+      date = {post.attributes.publishedAt}
+      views = {"1"}
+      url_post = {"/blog/"+post.attributes.slug}
+      pathname = {Astro.url.pathname}
+  ></BlogCard>)} 
+</BaseLayout>

@@ -1,0 +1,39 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+
+import fetchApi from '../../lib/strapi';
+import type Article from '../../interfaces/article'; 
+const articles = await fetchApi<Article[]>({
+   endpoint: 'articles', // el tipo de contenido a obtener
+   wrappedByKey: 'data', // la clave para descomponer la respuesta
+});
+
+const allCategories = [...new Set(articles.map((post) => post.attributes.tags.split(",")).flat())];
+const categoriesList = allCategories.map((category) => category.trim().toLowerCase())
+---
+
+
+<MainLayout title = "Indice de categorias">
+  <h2>Categorias</h2>
+  <div class="tags">{categoriesList.map((tag) => <a class="tag" href={"/tags/"+ tag}>{tag.toUpperCase()}</a>)}</div>
+</MainLayout>
+
+<style>
+  a {
+    color: #00539F;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    margin: 0.25em;
+    border: dotted 1px #a1a1a1;
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: #F8FCFD;
+  }
+</style>

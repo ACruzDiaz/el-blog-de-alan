@@ -1,0 +1,29 @@
+---
+import Eventos from "./Eventos.astro";
+import SoundCloudList from "./SoundCloudList.astro";
+
+---
+<aside>
+  <SoundCloudList/>
+  <Eventos/>
+</aside>
+
+<style>
+  aside{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 0 auto;
+
+  }
+  
+  @media (min-width: 1024px) {
+    aside{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    padding-right:min(1rem,5%); 
+    margin-left: 1rem;
+  }
+  }
+</style>

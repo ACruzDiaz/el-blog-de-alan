@@ -1,0 +1,35 @@
+---
+import "../../styles/utils.css"
+import BlogLayout from '../../layouts/BlogLayout.astro';
+//import BlockRendererClient from "./BlockRendererClient";
+//Astro MARKDOWN
+import {markdown} from '@astropub/md'
+//STRAPI modules
+import fetchApi from '../../lib/strapi';
+import type Article from '../../interfaces/article'; 
+export async function getStaticPaths() {
+  const articles = await fetchApi<Article[]>({
+   endpoint: 'articles', // el tipo de contenido a obtener
+   wrappedByKey: 'data', // la clave para descomponer la respuesta
+});
+// const allCategories = [...new Set(articles.map((post) => post.attributes.tags.split(",")).flat())];
+// const categoriesList = allCategories.map((category) => category.trim().toLowerCase())
+  return articles.map((article) => ({ params:{ blogs: article.attributes.slug }, props: article, }));
+    
+
+  ;
+}
+type Props = Article;
+
+const article  = Astro.props;
+---
+
+
+<BlogLayout title={article.attributes.title} pubDate = {article.attributes.publishedAt} coverurl={article.attributes.coverurl}>
+  {
+    markdown(article.attributes.content)
+  }
+  
+</BlogLayout> 
+
+

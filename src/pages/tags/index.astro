@@ -8,14 +8,17 @@ const articles = await fetchApi<Article[]>({
    wrappedByKey: 'data', // la clave para descomponer la respuesta
 });
 
-const allCategories = [...new Set(articles.map((post) => post.attributes.tags.split(",")).flat())];
-const categoriesList = allCategories.map((category) => category.trim().toLowerCase())
+let categoriesList = articles.map((category) => category.attributes.tags.split(",")).flat()
+categoriesList = categoriesList.map(category => category.toLocaleLowerCase().trim());
+
+const allCategories = [...new Set(categoriesList)];
+
 ---
 
 
 <MainLayout title = "Indice de categorias">
   <h2>Categorias</h2>
-  <div class="tags">{categoriesList.map((tag) => <a class="tag" href={"/tags/"+ tag}>{tag.toUpperCase()}</a>)}</div>
+  <div class="tags">{allCategories.map((tag) => <a class="tag" href={"/tags/"+ tag}>{tag.toUpperCase()}</a>)}</div>
 </MainLayout>
 
 <style>

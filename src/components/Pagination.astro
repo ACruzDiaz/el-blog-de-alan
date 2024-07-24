@@ -1,0 +1,26 @@
+---
+import Button from './Button.astro'
+
+const {prevUrl, nextUrl} = Astro.props;
+---
+
+<nav aria-label = 'blog pages'>
+  {
+    prevUrl &&
+    (<Button title = "Back" href = {prevUrl}/>)
+  }
+  {
+    nextUrl &&
+    (<Button title = "Next" href = {nextUrl}/>)
+  }
+</nav>
+
+<style>
+  nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+</style>

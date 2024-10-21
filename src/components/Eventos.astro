@@ -15,7 +15,7 @@ const {avoidShowOutdated = false} = Astro.props;
 const eventosFiltered = eventos.filter((evento)=>
   (new Date(evento.attributes.fechaEvento).getTime() > fechaActual * avoidShowOutdated)
 );
-const imageList = eventosFiltered.map((evento) =>{ return {poster: `${import.meta.env.STRAPI_URL}`+ evento.attributes.poster.data.attributes.formats.small.url,
+const imageList = eventosFiltered.map((evento) =>{ return {poster:  evento.attributes.poster.data.attributes.formats.small.url,
                                                           date: evento.attributes.fechaEvento}});
 const imageListJson = JSON.stringify(imageList);
 const options = {

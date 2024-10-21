@@ -1,0 +1,22 @@
+---
+import fetchApi from '../../lib/strapi';
+import type Article from '../../interfaces/article'; 
+import SecondaryBlogCard from '../secondaryBlogCard/SecondaryBlogCard.astro';
+
+const articles = await fetchApi<Article[]>({
+   endpoint: 'articles', // el tipo de contenido a obtener
+   wrappedByKey: 'data', // la clave para descomponer la respuesta
+});
+---
+
+<div class="secondaryCardContainer">
+  {articles.map((article) => <SecondaryBlogCard
+    title = {article.attributes.title}
+    primeraCategoria = {article.attributes.tags.split(",")[0].toUpperCase()}
+    image = {article.attributes.coverurl}
+    slug = {article.attributes.slug}
+></SecondaryBlogCard>).slice(0,5)}
+</div>
+
+<style>
+</style>

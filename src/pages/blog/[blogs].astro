@@ -7,29 +7,30 @@ import {markdown} from '@astropub/md'
 //STRAPI modules
 import fetchApi from '../../lib/strapi';
 import type Article from '../../interfaces/article'; 
+import SecondaryCardContainer from "../../components/blogCardContainer/SecondaryCardContainer.astro";
+export const prerender = true; //Esta linea es necesario porque parece que la funcion 'markdown' hace dinamica a esta pagina
 export async function getStaticPaths() {
   const articles = await fetchApi<Article[]>({
    endpoint: 'articles', // el tipo de contenido a obtener
    wrappedByKey: 'data', // la clave para descomponer la respuesta
 });
-// const allCategories = [...new Set(articles.map((post) => post.attributes.tags.split(",")).flat())];
-// const categoriesList = allCategories.map((category) => category.trim().toLowerCase())
-  return articles.map((article) => ({ params:{ blogs: article.attributes.slug }, props: article, }));
-    
 
-  ;
+  return articles.map((article) => ({ params:{ blogs: article.attributes.slug }, props: article}));
+    
 }
 type Props = Article;
-
 const article  = Astro.props;
+
 ---
-
-
 <BlogLayout title={article.attributes.title} pubDate = {article.attributes.publishedAt} coverurl={article.attributes.coverurl}>
-  {
-    markdown(article.attributes.content)
-  }
+
+    {
+      markdown(article.attributes.content)
+    }
+    
+    <SecondaryCardContainer slot="relatedArticlesSlot"/>
+
+
   
 </BlogLayout> 
-
 

@@ -1,24 +1,140 @@
 ---
+import fetchApi from '../lib/strapi';
+import type Evento from '../interfaces/evento'; 
+import { Image } from "astro:assets";
+const eventos = await fetchApi<Evento[]>({
+   endpoint: 'eventos?populate=poster', // el tipo de contenido a obtener
+   wrappedByKey: 'data', // la clave para descomponer la respuesta
+});
+
+let fechaActual = new Date().getTime();
+
+
+const {avoidShowOutdated = false} = Astro.props;
+
+const eventosFiltered = eventos.filter((evento)=>
+  (new Date(evento.attributes.fechaEvento).getTime() > fechaActual * avoidShowOutdated)
+);
+const imageList = eventosFiltered.map((evento) =>{ return {poster: `${import.meta.env.STRAPI_URL}`+ evento.attributes.poster.data.attributes.formats.small.url,
+                                                          date: evento.attributes.fechaEvento}});
+const imageListJson = JSON.stringify(imageList);
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
 ---
-<section>
-  <h1>Eventos</h1>
-  <a href="#">
-    <img src="https://venngage-wordpress.s3.amazonaws.com/uploads/2018/10/Colorful-Vintage-90s-Event-Poster-Template.jpg" alt="poster">
+
+<eventico-loco data-message={imageListJson}>
+</eventico-loco>
+<div>
+  <a id ="linkImagen" href={imageList[0].poster} >
+    <img id="imageSrc" alt="poster" src={imageList[0].poster}>
   </a>
-  <div class="arrowContainer">
-    <button id = "antEvento"type="button">⬅️</button>
-    <button id= "sigEvento"type="button">➡️</button>
+  <span id = "eventoFecha">
+    {
+      new Date(eventos[0].attributes.fechaEvento).toLocaleString('es-US',{
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      }
+  </span>
+  <div class="arrowContainer" id = arrowContainerjs>
+    <button id = "antEvento"type="button">{'<'}</button>
+    <button id= "sigEvento"type="button">{'>'}</button>
   </div>
-  </section>
+</div>
+
+
+  <script>
+
+      class Eventos extends HTMLElement {   
+      constructor() {
+      super();
+      document.addEventListener('DOMContentLoaded', () => {
+        const next = document.getElementById("sigEvento");
+        const prev = document.getElementById("antEvento");
+        const container = document.getElementById('arrowContainerjs');
+        const linkImagen = document.getElementById('linkImagen');
+        const imageSrc = document.getElementById('imageSrc');
+        const eventoFecha = document.getElementById('eventoFecha');
+        let sumador = 0;
+        const imageLista = JSON.parse(this.dataset.message);
+        
+        container.addEventListener('click', (e) => {
+        if(e.target === next){
+          if(sumador >= imageLista.length-1){
+            sumador = 0;
+          }else{
+            sumador++;
+          }
+
+        }
+        else if(e.target === prev){
+          if(sumador <= 0){
+            sumador = imageLista.length-1;
+          }else{
+            sumador--;
+
+          }
+        }
+        console.log(imageLista[sumador]);
+        linkImagen.setAttribute('href', imageLista[sumador].poster);
+        imageSrc.setAttribute('src', imageLista[sumador].poster);
+        
+      const fecha = new Date(imageLista[sumador].date).toLocaleString('es-US',{
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    
+        eventoFecha.innerText= fecha;
+      })
+      })
+    }
+}
+
+  customElements.define('eventico-loco', Eventos);
+
+</script>
+
+  
 <style>
+  div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    & > a{
+    
+    width: min(100%, 320px);
+    height: 364px;
+    border: 1px dotted var(--accent-color);
+    overflow: hidden;
+      & > img{
+        object-fit: cover;
+      }
+    }
+    & > span#eventoFecha{
+      color: var(--secondary-color);
+      text-align: center;
+    }
+  }
   #sigEvento, #antEvento{
+    color: var(--primary-color);
+    font-weight: 900;
+    margin: 1rem 0;
     font-size: larger;
     border: 1px solid black;
-    background-color: #adff2f;
+    background-color:var(--accent-color);
     padding: 0.125rem 1rem;
     border-radius: 0.25rem;
     &:hover{
-      background-color: #7ea73f;
+      background-color: var(--secondary-color);
     }
   }
   .arrowContainer{
@@ -30,14 +146,6 @@
     margin-bottom: 0.5rem;
   }
   section{
-    margin: 1rem 0;
-    border: 1px solid black;
-    &>h1{
-      margin: 0.5rem 1rem;
-      font-size: large;
-      font-weight: 800;
-
-    }
+    background-color: var(--secondary-color);
   }
-  
 </style>

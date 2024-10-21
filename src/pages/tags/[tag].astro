@@ -1,6 +1,6 @@
 ---
 import BlogCard from '../../components/BlogCard.astro';
-import BaseLayout from '../../layouts/MainLayout.astro';
+import MainLayout from '../../layouts/MainLayout.astro';
 
 function equalsIgnoringCase(text, other) {
     return text.localeCompare(other, undefined, { sensitivity: 'base' }) === 0;
@@ -9,6 +9,7 @@ function equalsIgnoringCase(text, other) {
 //STRAPI modules
 import fetchApi from '../../lib/strapi';
 import type Article from '../../interfaces/article'; 
+export const prerender = true;
 export async function getStaticPaths() {
   const articles = await fetchApi<Article[]>({
    endpoint: 'articles', // el tipo de contenido a obtener
@@ -39,15 +40,30 @@ const filteredPosts = posts.filter((post) => {
 
 
 ---
-<BaseLayout title={tag}>
-  {filteredPosts.map((post) => 
-  <BlogCard
-      title = {post.attributes.title}
-      category = {post.attributes.tags.split(",")}
-      image = {post.attributes.coverurl}
-      date = {post.attributes.publishedAt}
-      views = {"1"}
-      url_post = {"/blog/"+post.attributes.slug}
-      pathname = {Astro.url.pathname}
-  ></BlogCard>)} 
-</BaseLayout> 
+
+<MainLayout title={tag}>
+  <main>
+    {filteredPosts.map((post) => 
+      <BlogCard
+          title = {post.attributes.title}
+          category = {post.attributes.tags.split(",")}
+          image = {post.attributes.coverurl}
+          date = {new Date(post.attributes.publishedAt).toDateString()}
+          views = {"1"}
+          url_post = {"/blog/"+post.attributes.slug}
+          pathname = {Astro.url.pathname}
+      ></BlogCard>)} 
+  </main>
+</MainLayout> 
+
+<style>
+  main{
+    display: grid;
+    width: 60%;
+    margin: 1rem auto;
+    gap: 1rem;
+    grid-auto-rows: 22rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem),1fr));
+    grid-auto-flow: dense;
+  }
+</style>

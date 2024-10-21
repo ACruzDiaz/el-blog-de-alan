@@ -1,0 +1,24 @@
+---
+const {tagName} = Astro.props; 
+---
+
+
+  <a class="tag" href={"/tags/"+ tagName}>{tagName.toUpperCase()}</a>
+
+
+<style>
+  a {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+
+  .tag {
+    margin: 0.25em;
+    border: solid 1px var(--primary-color);
+    border-radius: .5em;
+    padding: .5em 1em;
+    font-size: 1.15em;
+    background-color: var(--secondary-color);
+  }
+</style>

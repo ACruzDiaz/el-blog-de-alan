@@ -1,0 +1,38 @@
+---
+const {title, image} = Astro.props;
+---
+
+<a href={'tags/'+title.toLowerCase()} class="categoryCard">
+  <img src={image} alt={"categoria " + title}>
+  <h3>{title}</h3>
+</a>
+
+
+<style>
+  .categoryCard{
+    min-width: 150px;
+    max-width: 200px;
+    height: 256px;
+    display: flex;
+    position: relative;
+    flex-basis: 100%;
+    overflow: hidden;
+  }
+  img{
+    z-index: 0;
+    object-fit: cover;
+    filter:brightness(1)
+  }
+  h3{
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    align-self: flex-end;
+    width: 100%;
+    overflow-wrap: break-word;
+    font-size: xx-large;
+    padding-bottom: 1rem;
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+
+</style>

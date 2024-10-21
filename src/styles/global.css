@@ -1,0 +1,60 @@
+:root{
+  --primary-color: #3E433E;
+  --secondary-color: #E9C7A5;
+  --accent-color: #FD6043;
+
+  --large-margin: 4rem;
+  --medium-margin:2rem;
+  --small-margin: 1rem;
+
+  --font-small: 0.75rem;
+  --font-regular: 1rem;
+  --font-large: 1.25rem;
+  --font-xlarge: 1.5rem;
+  --font-xxlarge: 2rem;
+  --font-xxxlarge: 3rem;
+}
+
+body{
+  background-color: var(--primary-color);
+  box-sizing: border-box;
+  position: relative;
+}
+main{
+  margin: var(--small-margin);
+
+
+}
+
+h2{
+  font-size: var(--font-large);
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
+h3{
+  font-size: var(--font-regular);
+  color: var(--secondary-color);
+  font-weight: 700;
+}
+
+.fondoTW{
+  background-color: var(--secondary-color);
+}
+
+.boton{
+  background-color: var(--accent-color);
+  color: var(--secondary-color);
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: var(--font-large);
+  font-weight: 700;
+  text-align: center;
+
+}
+@media (max-width:500px ){
+  body{
+    margin-bottom: 4.5rem;
+  }
+}

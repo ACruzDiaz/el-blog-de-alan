@@ -1,27 +1,68 @@
 ---
+import Link from "../components/Link.astro"
 import NotFoundLayout from "../layouts/NotFoundLayout.astro"
 ---
 
-<!--
-  This example requires updating your template:
-
-  ```
-  <html class="h-full">
-  <body class="h-full">
-  ```
--->
 <NotFoundLayout>
-  <main class="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-    <div class="text-center">
-      <p class="text-base font-semibold text-indigo-600">404</p>
-      <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Page not found</h1>
-      <p class="mt-6 text-base leading-7 text-gray-600">Sorry, we couldn’t find the page you’re looking for.</p>
-      <div class="mt-10 flex items-center justify-center gap-x-6">
-        <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Go back home</a>
-        <a href="#" class="text-sm font-semibold text-gray-900">Contact support <span aria-hidden="true">&rarr;</span></a>
-      </div>
-    </div>
+  <main>
+    <p id="notFoundH1"><span>Ooopss! </span> Algo a salido mal...  <span class="errorMSG">Error 404</span></p>
+  
+    <img id="notFoundIMG" src="/images/404.png" alt="404 error">
+    <Link text = "Regresar al inicio" href="/" classes = "boton notFoundLINK"/>
   </main>
 </NotFoundLayout>
 
+<style>
+  main{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 5rem;
+  }
+  img{
+    max-width: 400px;
+  }
+
+  p#notFoundH1{
+    display: flex;
+    flex-direction: column;
+    color: var(--secondary-color);
+    span{
+      color: var(--accent-color);
+      font-size: var(--font-xxxlarge);
+      font-weight: 700;
+    }
+    .errorMSG{
+    color: var(--secondary-color);
+    font-size: var(--font-large);
+    font-weight: 200;
+    margin-top: 0.5rem;
+  }
+    font-size: var(--font-xxlarge);
+    font-weight: 400;
+  }
+  @media (min-width: 1024px) {
+
+    main{
+      padding-top: 3rem;
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 5fr 1fr;
+      grid-template-areas: "imagen titulos"
+                  "link link";
+    }
+    #notFoundH1{
+      grid-area: titulos;
+    }
+    #notFoundIMG{
+      grid-area: imagen;
+
+    }
+    .notFoundLINK{
+      grid-area: link;
+    }
+  }
+
+</style>
 

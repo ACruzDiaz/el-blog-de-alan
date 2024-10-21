@@ -2,11 +2,13 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import BlogCard from "../../components/BlogCard.astro";
 import Pagination from "../../components/Pagination.astro";
+import BlogCardContainer from "../../components/blogCardContainer/BlogCardContainer.astro";
 //STRAPI modules
 import fetchApi from '../../lib/strapi';
 import type Article from '../../interfaces/article'; 
 
 const RandomNumber = 1;
+export const prerender = true; 
 export async function getStaticPaths({ paginate }){
   const articles = await fetchApi<Article[]>({
    endpoint: 'articles', // el tipo de contenido a obtener
@@ -15,48 +17,28 @@ export async function getStaticPaths({ paginate }){
   const sortedByDate = articles.sort((a,b)=> Date.parse(b.attributes.publishedAt) - Date.parse(a.attributes.publishedAt));
 
   return paginate(sortedByDate, {
-    pageSize:2,
-    
+    pageSize:4,
   })
 }
 const { page } = Astro.props as any ;
-console.log(page)
 ---
 <MainLayout title = "Mis blogs">
-  <h1>Post recientes</h1>
   <main>
-    <section id = "articulos-interes" class="m-auto py-6 sm:py-12 dark:bg-gray-100 dark:text-gray-800">
-      <div class="container p-6 mx-auto space-y-8">
+      <BlogCardContainer>
       {
         page.data.map((article) => 
         <BlogCard
         title = {article.attributes.title}
         category = {article.attributes.tags.split(",")}
         image = {article.attributes.coverurl}
-        date = {article.attributes.publishedAt}
+        date = {new Date(article.attributes.publishedAt).toDateString()}
         views = {RandomNumber}
-        url_post = {"blog/"+article.attributes.slug}
+        url_post = {"/blog/"+article.attributes.slug}
         from = {"tags/"}
         />
     )}
-      <Pagination prevUrl = {page.url.prev} nextUrl = {page.url.next}/>
-		</div>
-  </section>
+      
+		</BlogCardContainer>
+    <Pagination prevUrl = {page.url.prev} nextUrl = {page.url.next}/>
   </main>
-
 </MainLayout>
-
-
-<style>
-  main{
-    width: 100%;
-    
-  }
-  section{
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: center;
-    width: 50%;
-  }
-</style>

@@ -3,7 +3,19 @@ import MainLayout from "../layouts/MainLayout.astro"
 import LogoClouds from "../components/LogoClouds.astro"
 import BlogCard from "../components/BlogCard.astro"
 import SoundCloudList from "../components/SoundCloudList.astro";
-import AsideElements from "../components/AsideElements.astro";
+import Seccion from "../components/Seccion.astro";
+import Eventos from "../components/Eventos.astro";
+import CategoryContainer from '../components/categories/CategoryContainer.astro';
+import CategoryCard from '../components/categories/CategoryCard.astro';
+import {categories} from '../data/categoryData'
+import Link from '../components/Link.astro'
+import PresentationCard from '../components/PresentationCard.astro';
+import SecondaryCardContainer from '../components/blogCardContainer/SecondaryCardContainer.astro';
+
+//STRAPI modules
+import fetchApi from '../lib/strapi';
+import type Article from '../interfaces/article'; 
+
 
 const max = 500;
 const min = 1500;
@@ -11,74 +23,125 @@ const RandomNumber = Math.floor((Math.random()* (max - min) + min));
 
 var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 var today  = new Date();
-
 const date = today.toLocaleDateString("en-US");
-
-const allPosts = await Astro.glob('./blog/*.md');
-//console.log(allPosts);
-
-//STRAPI modules
-import fetchApi from '../lib/strapi';
-import type Article from '../interfaces/article'; 
 
 const articles = await fetchApi<Article[]>({
    endpoint: 'articles', // el tipo de contenido a obtener
    wrappedByKey: 'data', // la clave para descomponer la respuesta
 });
-
-
 ---
 
 <MainLayout title = "El blog de Alan">
 	<main>
-			<div class="container mx-auto space-y-16 my-4">
-				<section class="grid gap-6 text-center lg:grid-cols-2 xl:grid-cols-5">
-					<div class="w-full p-6 rounded-md sm:p-16 xl:col-span-2 dark:bg-gray-50">
-						<span class="block mb-2 dark:text-violet-600">¡Hola! Te saluda</span>
-						<h1 class="text-5xl font-regular dark:text-gray-900">Tu amigo digital <span class="font-extrabold">Alan Cruz</span></h1>
-						<p class="my-8">
-							<span class="font-medium dark:text-gray-900">🧑‍💻</span>Y te doy la bienvenida a mi espacio digital, en donde encontraras recomendaciones de musica, libros y peliculas. Tambien tengo una sección de proyectos y por supuesto puedes contactarme en mis redes sociales.✌️
-						</p>
-					</div>
-					<img src="/images/portada-blog.jpg" alt="" class="object-cover w-full h-full rounded-md xl:col-span-3 dark:bg-gray-500">
-				</section>
-			</div>
-		<LogoClouds></LogoClouds>
-		<section class="asideSection">
-			<AsideElements/>
-			<section id = "articulos-interes" class="ml-auto py-6 sm:py-12 dark:bg-gray-100 dark:text-gray-800">
-				<div class="container p-6 mx-auto space-y-8">
-					<div class="space-y-2 text-center">
-						<h2 class="text-3xl font-bold">Articulos que podrian ser de tu interes</h2>
-						<p class="font-serif text-sm dark:text-gray-600">Aprende sobre programacion e incentiva tu creatividad.</p>
-					</div>
-					<div class="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+		<aside id="aside-top">
+			<Seccion sectionTitle = "Categorias">
+				<CategoryContainer>
+					{
+						categories.map((categoria)=> <CategoryCard title = {categoria.title} image = {categoria.image}></CategoryCard>)
+					}
+				</CategoryContainer>
+			</Seccion>
+			<Seccion sectionTitle = "Presentación">
+				<PresentationCard/>
+			</Seccion>
+		</aside>
+		<aside id="aside-column">
+			<Seccion sectionTitle = "Random">
+				<SecondaryCardContainer/>
+			</Seccion>
+
+			<Seccion sectionTitle = "Eventos">
+				<Eventos avoidShowOutdated = {false}/>
+			</Seccion>
+			
+			<Seccion sectionTitle="Musica">
+				<SoundCloudList/>
+			</Seccion>
+
+
+			<Seccion sectionTitle="Redes">
+				<LogoClouds/>
+			</Seccion>
+		</aside>
+
+
+
+
+
+		<section id = "articulos-interes" class="transparentBg ml-auto py-6 sm:py-12 dark:bg-gray-100 dark:text-gray-800">
+			<h2>Post</h2>
+			<div class=" grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
 				{articles.map((article) => <BlogCard
 					title = {article.attributes.title}
 					category = {article.attributes.tags.split(",")}
 					image = {article.attributes.coverurl}
-					date = {article.attributes.publishedAt}
+					date = {new Date(article.attributes.publishedAt).toDateString()}
 					views = {RandomNumber}
 					url_post = {"blog/"+article.attributes.slug}
 					from = {"tags/"}
 			></BlogCard>).slice(0,6)}
-	
+				<Link text = {"Ver más"} href = {'/blog'} classes = "boton verMas"/>
 			</div>
-		</div>
+
 		</section>
-		</section>
+
 
 </main>
 </MainLayout>
 
 <style>
+	.transparentBg{
+		background-color: transparent;
+	}
 
 @media (min-width: 1024px) {
-	.asideSection{
-		display:flex;
-		flex-direction: row-reverse;
+		main{
+			display: grid;
+			width: 90%;
+			max-width: 1256px;
+			margin: 0 auto;
+			gap:0.5rem;
+			grid-template-columns: 2.5fr 1fr 1fr;
+			grid-template-rows: 1fr 1fr 1fr 1fr;
+			grid-template-areas:"aside-top aside-top aside-flex"
+													"articulos articulos aside-flex"
+													"articulos articulos aside-flex"
+													"articulos articulos aside-flex";
+			& > #aside-column{
+				padding-left: 1.5rem;
+				grid-area: aside-flex;
+				#Redes{
+					height: 500px;
+					margin-bottom: 5rem;
+				}
+			}
+			& > #aside-top{
+				overflow: hidden;
+				grid-area: aside-top;
+				display: flex;
+				
+				#Presentación{
+					width: 30%;
 
-	}
+					
+				}
+				#Categorias{
+					width: 80%;
+					margin-right: 0.5rem;
+				}
+			}
+			& > #aside-column{
+				grid-area: aside-flex;
+				/* max-width: 224px; */
+				overflow: hidden;
+			}
+			& >#articulos-interes{
+				grid-area: articulos;
+				.verMas{
+
+				}
+			}
+		}
 }
 
 </style>

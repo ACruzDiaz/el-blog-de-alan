@@ -12,5 +12,7 @@ export default defineConfig({
   },
   // site: 'https://www.my-site.dev',
   output: "static",
-  adapter: netlify()
+  adapter: netlify({
+    imageCDN: false,
+  })
 });

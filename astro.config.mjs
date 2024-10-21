@@ -10,7 +10,7 @@ export default defineConfig({
     remarkPlugins: [],
     rehypePlugins: []
   },
-  site: 'https://www.my-site.dev',
-  output: "server",
+  // site: 'https://www.my-site.dev',
+  output: "static",
   adapter: netlify()
 });
